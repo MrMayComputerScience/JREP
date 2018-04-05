@@ -6,10 +6,70 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.control.ListView?>
-<FlowPane fx:controller="sample.Controller"
-          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-    <TextField fx:id="matchField" />
-    <Button onAction="#selectRootDirectory">Select Root Directory</Button>
-    <Button onAction="#getMatchingFiles">Find Matches</Button>
-    <ListView fx:id="results" />
-</FlowPane>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<BorderPane fx:controller="sample.Controller"
+            xmlns:fx="http://javafx.com/fxml">
+
+    <top>
+        <VBox>
+            <MenuBar >
+                <menus>
+                    <Menu text="Settings">
+                        <MenuItem text="New"/>
+                    </Menu>
+                </menus>
+            </MenuBar>
+            <HBox>
+                <Label>Root Directory: </Label>
+                <Label fx:id="rootDirLabel"/>
+            </HBox>
+
+            <HBox>
+                <Label>Files Searched: </Label>
+                <Label fx:id="filesSearched"/>
+            </HBox>
+
+            <HBox>
+                <Label>Matches Found: </Label>
+                <Label fx:id="matchesFound"/>
+            </HBox>
+            <HBox>
+                <Label>Status: </Label>
+                <Label fx:id="statusLabel">Not Running</Label>
+            </HBox>
+
+        </VBox>
+    </top>
+    <center>
+
+        <ListView fx:id="results" >
+            <items>
+
+            </items>
+        </ListView>
+    </center>
+
+    <bottom>
+        <VBox>
+            <HBox>
+                <TextField fx:id="matchField" GridPane.columnIndex="0" GridPane.rowIndex="2" HBox.hgrow="ALWAYS"/>
+                <VBox>
+                    <Button onAction="#getMatchesButton" fx:id="searchButton">Find Matches</Button>
+                    <Button onAction="#cancelSearch">Cancel Search</Button>
+                </VBox>
+
+            </HBox>
+            <HBox>
+                <Button onAction="#selectRootDirectory">Select Root Directory</Button>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>

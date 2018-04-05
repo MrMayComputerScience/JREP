@@ -1,7 +1,16 @@
 package sample;
 
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,54 +25,54 @@ import java.util.List;
 
 public class Controller {
     private boolean strictMatch;
+    private boolean searchContent;
     private File rootDir;
+    private Searcher proc;
+    private ResourcePackage rp;
     @FXML private TextField matchField;
+    @FXML private ListView results;
+    @FXML private Label filesSearched;
+    @FXML private Label matchesFound;
+    @FXML private Label rootDirLabel;
+    @FXML private Label statusLabel;
+    @FXML private Button searchButton;
+
     public void initialize(){
         strictMatch = false;
-        rootDir = selectRootDirectory();
-        System.out.println(rootDir.getName());
-
+        searchContent = true;
+        rootDir = new File("C:\\");
+        rootDirLabel.setText(rootDir.getAbsolutePath());
+        filesSearched.setText("0");
+        matchesFound.setText("0");
+        rp = new ResourcePackage(rootDir, matchField.getText(),
+                filesSearched, matchesFound, results, statusLabel,
+                strictMatch, searchContent);
+        matchField.textProperty().addListener((obs, oval, nval) -> {
+            rp.setMatchString(nval);
+        });
     }
-    public File selectRootDirectory(){
-        File ret = null;
+    public void selectRootDirectory(){
         DirectoryChooser dc = new DirectoryChooser();
         Window popup = new Stage();
-        ret = dc.showDialog(popup);
-        return ret;
+        File ret = dc.showDialog(popup);
+        rootDir = ret != null ? ret : rootDir;
+        rootDirLabel.setText(rootDir.getAbsolutePath());
+        rp.setRootDir(rootDir);
     }
-    public File[] getMatchingFiles(){
-        File[] ret = getMatchingFiles(rootDir);
-        System.out.println(Arrays.toString(ret));
-        return ret;
+    public void getMatchesButton(){
+        filesSearched.setText("0");
+        matchesFound.setText("0");
+        statusLabel.setText("Running");
+        searchButton.setDisable(true);
+        results.getItems().removeAll(results.getItems());
+        System.out.println("rp = " + rp);
+        proc = Searcher.create(rp);
+        proc.onEnd(() -> searchButton.setDisable(false));
+        proc.setDaemon(true);
+        proc.start();
     }
-    public File[] getMatchingFiles(File dir){
-        String matchString = matchField.getText();
-        //TODO: Add null checking for rootDir
-        File[] children = dir.listFiles();
-        List<File> matchList = new LinkedList<>();
-
-        if(children == null)
-            return new File[0];
-
-        for(File f : children){
-            String s = f.getName();
-            if(strictMatch){
-                if(s.contentEquals(matchString)){
-                    matchList.add(f);
-                    System.out.println("Success!");
-                }
-            }
-            else{
-                if(s.contains(matchString)){
-                    matchList.add(f);
-                }
-            }
-            matchList.addAll(Arrays.asList(getMatchingFiles(f)));
-        }
-        File[] ret = new File[matchList.size()];
-        matchList.toArray(ret);
-        return ret;
+    public void cancelSearch(){
+        proc.cancel();
     }
-
 }
 
