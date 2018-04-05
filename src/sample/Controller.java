@@ -1,13 +1,14 @@
 package sample;
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
@@ -18,14 +19,10 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Controller {
-    private boolean strictMatch;
-    private boolean searchContent;
+
     private File rootDir;
     private Searcher proc;
     private ResourcePackage rp;
@@ -36,10 +33,11 @@ public class Controller {
     @FXML private Label rootDirLabel;
     @FXML private Label statusLabel;
     @FXML private Button searchButton;
+    @FXML private List<Node> volatileElements;
 
     public void initialize(){
-        strictMatch = false;
-        searchContent = true;
+        boolean strictMatch = false;
+        boolean searchContent = false;
         rootDir = new File("C:\\");
         rootDirLabel.setText(rootDir.getAbsolutePath());
         filesSearched.setText("0");
@@ -50,6 +48,7 @@ public class Controller {
         matchField.textProperty().addListener((obs, oval, nval) -> {
             rp.setMatchString(nval);
         });
+        volatileElements = Collections.unmodifiableList(volatileElements);
     }
     public void selectRootDirectory(){
         DirectoryChooser dc = new DirectoryChooser();
@@ -63,16 +62,35 @@ public class Controller {
         filesSearched.setText("0");
         matchesFound.setText("0");
         statusLabel.setText("Running");
-        searchButton.setDisable(true);
-        results.getItems().removeAll(results.getItems());
+
+        //DISABLE ALL VOLATILE ELEMENTS
+        for(Node n : volatileElements)
+            n.setDisable(true);
+        ///////////////////////////////
+        System.out.println("Before the removal");
+        results.setItems(FXCollections.observableArrayList());
         System.out.println("rp = " + rp);
         proc = Searcher.create(rp);
-        proc.onEnd(() -> searchButton.setDisable(false));
+
+        proc.onEnd(() -> Platform.runLater(() -> {
+            //ENABLE VOLATILE ELEMENTS
+            for(Node n : volatileElements)
+                n.setDisable(false);
+
+        }));
+
         proc.setDaemon(true);
         proc.start();
     }
     public void cancelSearch(){
         proc.cancel();
+    }
+
+    public void onStrictChange(){
+        rp.toggleStrict();
+    }
+    public void onContentChange(){
+        rp.toggleSearchContent();
     }
 }
 

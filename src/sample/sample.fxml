@@ -14,38 +14,44 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Separator?>
+<?import java.util.ArrayList?>
 <BorderPane fx:controller="sample.Controller"
             xmlns:fx="http://javafx.com/fxml">
 
     <top>
-        <VBox>
-            <MenuBar >
-                <menus>
-                    <Menu text="Settings">
-                        <MenuItem text="New"/>
-                    </Menu>
-                </menus>
-            </MenuBar>
-            <HBox>
-                <Label>Root Directory: </Label>
-                <Label fx:id="rootDirLabel"/>
-            </HBox>
+        <HBox spacing="25">
+            <VBox>
+                <HBox>
+                    <Label>Root Directory: </Label>
+                    <Label fx:id="rootDirLabel"/>
+                </HBox>
 
-            <HBox>
-                <Label>Files Searched: </Label>
-                <Label fx:id="filesSearched"/>
-            </HBox>
+                <HBox>
+                    <Label>Files Searched: </Label>
+                    <Label fx:id="filesSearched"/>
+                </HBox>
 
-            <HBox>
-                <Label>Matches Found: </Label>
-                <Label fx:id="matchesFound"/>
-            </HBox>
-            <HBox>
-                <Label>Status: </Label>
-                <Label fx:id="statusLabel">Not Running</Label>
-            </HBox>
+                <HBox>
+                    <Label>Matches Found: </Label>
+                    <Label fx:id="matchesFound"/>
+                </HBox>
+                <HBox>
+                    <Label>Status: </Label>
+                    <Label fx:id="statusLabel">Not Running</Label>
+                </HBox>
 
-        </VBox>
+            </VBox>
+            <GridPane alignment="CENTER" vgap="5" hgap="10">
+                <CheckBox fx:id="strictCb" text="Strict Match" onAction="#onStrictChange"
+                          GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                <CheckBox fx:id="contentCb" text="Search Content" onAction="#onContentChange"
+                          GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                <Button fx:id="rootDirButton" onAction="#selectRootDirectory" GridPane.rowIndex="0"
+                        GridPane.rowSpan="2" GridPane.columnIndex="1" text="Select Root Directory"/>
+            </GridPane>
+        </HBox>
     </top>
     <center>
 
@@ -61,15 +67,24 @@
             <HBox>
                 <TextField fx:id="matchField" GridPane.columnIndex="0" GridPane.rowIndex="2" HBox.hgrow="ALWAYS"/>
                 <VBox>
+
                     <Button onAction="#getMatchesButton" fx:id="searchButton">Find Matches</Button>
                     <Button onAction="#cancelSearch">Cancel Search</Button>
                 </VBox>
 
             </HBox>
             <HBox>
-                <Button onAction="#selectRootDirectory">Select Root Directory</Button>
+
             </HBox>
         </VBox>
     </bottom>
+    <fx:define>
+        <ArrayList fx:id="volatileElements">
+            <fx:reference source="rootDirButton"/>
+            <fx:reference source="strictCb"/>
+            <fx:reference source="contentCb"/>
+            <fx:reference source="searchButton"/>
+        </ArrayList>
+    </fx:define>
 
 </BorderPane>

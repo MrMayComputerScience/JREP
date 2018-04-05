@@ -41,6 +41,10 @@ public class ResourcePackage {
         this.strictMatch = strictMatch;
     }
 
+    public void setSearchContent(boolean searchContent) {
+        this.searchContent = searchContent;
+    }
+
     public File getRootDir() {
         return rootDir;
     }
@@ -71,6 +75,14 @@ public class ResourcePackage {
 
     public boolean isSearchContent() {
         return searchContent;
+    }
+
+    public void toggleStrict(){
+        strictMatch = !strictMatch;
+    }
+
+    public void toggleSearchContent(){
+        searchContent = !searchContent;
     }
 
     @Override

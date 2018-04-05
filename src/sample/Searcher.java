@@ -5,7 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +67,6 @@ public class Searcher extends Thread {
         }
         //TODO: Add null checking for rootDir
         File[] children = dir.listFiles();
-        List<File> matchList = new LinkedList<>();
 
         //If no children, return empty file array
         if(children == null)
@@ -103,9 +104,8 @@ public class Searcher extends Thread {
             else{
                 try(Scanner in = new Scanner(file)){
                     String content = "";
-                    while(in.hasNextLine()){
-                        content += in.nextLine()+"\n";
-                    }
+                    while (in.hasNextLine())
+                        content += in.nextLine() + "\n";
                     compareString = content;
                 }
                 catch (IOException e){
