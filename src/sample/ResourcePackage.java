@@ -1,9 +1,7 @@
 package sample;
 
-import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 
 import java.io.File;
 
@@ -16,9 +14,10 @@ public class ResourcePackage {
     private Label statusLabel;
     private boolean strictMatch;
     private boolean searchContent;
+    private boolean useRegex;
     public ResourcePackage(File rootDir, String matchString,
                            Label filesSearched, Label matchesFound, ListView results, Label statusLabel,
-                           boolean strictMatch, boolean searchContent) {
+                           boolean strictMatch, boolean searchContent, boolean useRegex) {
         this.rootDir = rootDir;
         this.matchString = matchString;
         this.filesSearched = filesSearched;
@@ -27,6 +26,7 @@ public class ResourcePackage {
         this.statusLabel = statusLabel;
         this.strictMatch = strictMatch;
         this.searchContent = searchContent;
+        this.useRegex = useRegex;
     }
 
     public void setRootDir(File rootDir) {
@@ -35,14 +35,6 @@ public class ResourcePackage {
 
     public void setMatchString(String matchString) {
         this.matchString = matchString;
-    }
-
-    public void setStrictMatch(boolean strictMatch) {
-        this.strictMatch = strictMatch;
-    }
-
-    public void setSearchContent(boolean searchContent) {
-        this.searchContent = searchContent;
     }
 
     public File getRootDir() {
@@ -85,6 +77,14 @@ public class ResourcePackage {
         searchContent = !searchContent;
     }
 
+    public boolean useRegex() {
+        return useRegex;
+    }
+
+    public void toggleRegex(){
+        useRegex = !useRegex;
+    }
+
     @Override
     public String toString() {
         return "ResourcePackage{" +
@@ -95,6 +95,7 @@ public class ResourcePackage {
                 ", results=" + results +
                 ", statusLabel=" + statusLabel +
                 ", strictMatch=" + strictMatch +
+                ", searchContent=" + searchContent +
                 '}';
     }
 }

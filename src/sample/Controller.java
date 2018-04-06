@@ -32,19 +32,19 @@ public class Controller {
     @FXML private Label matchesFound;
     @FXML private Label rootDirLabel;
     @FXML private Label statusLabel;
-    @FXML private Button searchButton;
     @FXML private List<Node> volatileElements;
 
     public void initialize(){
         boolean strictMatch = false;
         boolean searchContent = false;
+        boolean useRegex = true;
         rootDir = new File("C:\\");
         rootDirLabel.setText(rootDir.getAbsolutePath());
         filesSearched.setText("0");
         matchesFound.setText("0");
         rp = new ResourcePackage(rootDir, matchField.getText(),
                 filesSearched, matchesFound, results, statusLabel,
-                strictMatch, searchContent);
+                strictMatch, searchContent, useRegex);
         matchField.textProperty().addListener((obs, oval, nval) -> {
             rp.setMatchString(nval);
         });
@@ -83,6 +83,7 @@ public class Controller {
         proc.start();
     }
     public void cancelSearch(){
+        System.out.println("Should stop");
         proc.cancel();
     }
 
@@ -91,6 +92,9 @@ public class Controller {
     }
     public void onContentChange(){
         rp.toggleSearchContent();
+    }
+    public void onRegexChange(){
+        rp.toggleRegex();
     }
 }
 

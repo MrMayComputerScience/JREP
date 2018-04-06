@@ -43,13 +43,15 @@
                 </HBox>
 
             </VBox>
-            <GridPane alignment="CENTER" vgap="5" hgap="10">
+            <GridPane alignment="CENTER" vgap="4" hgap="10">
                 <CheckBox fx:id="strictCb" text="Strict Match" onAction="#onStrictChange"
                           GridPane.rowIndex="0" GridPane.columnIndex="0" />
                 <CheckBox fx:id="contentCb" text="Search Content" onAction="#onContentChange"
                           GridPane.rowIndex="1" GridPane.columnIndex="0" />
-                <Button fx:id="rootDirButton" onAction="#selectRootDirectory" GridPane.rowIndex="0"
-                        GridPane.rowSpan="2" GridPane.columnIndex="1" text="Select Root Directory"/>
+                <CheckBox fx:id="regexCb" text="Use Regex" onAction="#onRegexChange"
+                          GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                <Button fx:id="rootDirButton" onAction="#selectRootDirectory"
+                        GridPane.rowIndex="1" GridPane.columnIndex="1" text="Select Root Directory"/>
             </GridPane>
         </HBox>
     </top>
@@ -84,6 +86,8 @@
             <fx:reference source="strictCb"/>
             <fx:reference source="contentCb"/>
             <fx:reference source="searchButton"/>
+            <fx:reference source="matchField" />
+            <fx:reference source="regexCb" />
         </ArrayList>
     </fx:define>
 

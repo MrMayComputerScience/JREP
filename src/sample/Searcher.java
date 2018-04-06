@@ -5,14 +5,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Searcher extends Thread {
     private static Searcher instance;
@@ -62,10 +61,8 @@ public class Searcher extends Thread {
             onEnd.run();
     }
     private void getMatchingFiles(File dir){
-        if(shouldStop.get()){
-            return;
-        }
-        //TODO: Add null checking for rootDir
+
+
         File[] children = dir.listFiles();
 
         //If no children, return empty file array
@@ -74,6 +71,9 @@ public class Searcher extends Thread {
 
 
         for(int i = 0; i < children.length; i++){
+            if(shouldStop.get()){
+                return;
+            }
             File f = children[i];
             //Increment the number of files searched
             Platform.runLater(() -> {
@@ -102,11 +102,17 @@ public class Searcher extends Thread {
                 return false;
             }
             else{
-                try(Scanner in = new Scanner(file)){
-                    String content = "";
-                    while (in.hasNextLine())
-                        content += in.nextLine() + "\n";
-                    compareString = content;
+                try(FileInputStream fis = new FileInputStream(file);
+                    InputStreamReader in = new InputStreamReader(fis, "UTF8")){
+                    StringBuilder builder = new StringBuilder();
+                    char[] buff = new char[512];
+                    System.out.println("reading file "+file.getName());
+                    while(in.ready()){
+                        in.read(buff);
+                        builder.append(buff);
+                    }
+                    System.out.println("Done reading "+file.getName());
+                    compareString = builder.toString();
                 }
                 catch (IOException e){
                     e.printStackTrace();
@@ -114,10 +120,19 @@ public class Searcher extends Thread {
             }
         }
         if(rp.isStrictMatch()){
-            return compareString.equals(rp.getMatchString());
+            if(rp.useRegex())
+                return compareString.matches(rp.getMatchString());
+            else
+                return compareString.equals(rp.getMatchString());
         }
         else{
-            return compareString.contains(rp.getMatchString());
+            if(rp.useRegex()){
+                Pattern p = Pattern.compile(rp.getMatchString());
+                Matcher m = p.matcher(compareString);
+                return m.find();
+            }
+            else
+                return compareString.contains(rp.getMatchString());
         }
     }
 }
