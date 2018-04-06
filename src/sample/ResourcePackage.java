@@ -96,6 +96,7 @@ public class ResourcePackage {
                 ", statusLabel=" + statusLabel +
                 ", strictMatch=" + strictMatch +
                 ", searchContent=" + searchContent +
+                ", useRegex=" + useRegex +
                 '}';
     }
 }

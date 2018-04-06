@@ -57,7 +57,7 @@
     </top>
     <center>
 
-        <ListView fx:id="results" >
+        <ListView fx:id="results">
             <items>
 
             </items>

@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -37,7 +38,7 @@ public class Controller {
     public void initialize(){
         boolean strictMatch = false;
         boolean searchContent = false;
-        boolean useRegex = true;
+        boolean useRegex = false;
         rootDir = new File("C:\\");
         rootDirLabel.setText(rootDir.getAbsolutePath());
         filesSearched.setText("0");

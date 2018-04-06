@@ -1,10 +1,13 @@
 package sample;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
+import java.awt.*;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,12 +84,21 @@ public class Searcher extends Thread {
                 rp.getFilesSearched().setText(++numFiles + "");
             });
 
-
             if(matches(f)){
                 Platform.runLater(() -> {
                     int numMatches = Integer.parseInt(rp.getMatchesFound().getText());
                     rp.getMatchesFound().setText(++numMatches + "");
-                    rp.getResults().getItems().add(new Text(f.getAbsolutePath()));
+                    Text t = new Text(f.getAbsolutePath());
+                    t.setOnMouseClicked(event -> {
+                        if(event.getClickCount() == 2)
+                            try{
+                                Desktop.getDesktop().open(f.getParentFile());
+                            }
+                            catch(IOException e){
+                                e.printStackTrace();
+                            }
+                    });
+                    rp.getResults().getItems().add(t);
                 });
             }
             getMatchingFiles(f);
