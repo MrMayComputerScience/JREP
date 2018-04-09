@@ -17,6 +17,8 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Separator?>
 <?import java.util.ArrayList?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Slider?>
 <BorderPane fx:controller="sample.Controller"
             xmlns:fx="http://javafx.com/fxml">
 
@@ -46,12 +48,22 @@
             <GridPane alignment="CENTER" vgap="4" hgap="10">
                 <CheckBox fx:id="strictCb" text="Strict Match" onAction="#onStrictChange"
                           GridPane.rowIndex="0" GridPane.columnIndex="0" />
+
                 <CheckBox fx:id="contentCb" text="Search Content" onAction="#onContentChange"
                           GridPane.rowIndex="1" GridPane.columnIndex="0" />
+
                 <CheckBox fx:id="regexCb" text="Use Regex" onAction="#onRegexChange"
                           GridPane.rowIndex="2" GridPane.columnIndex="0" />
-                <Button fx:id="rootDirButton" onAction="#selectRootDirectory"
-                        GridPane.rowIndex="1" GridPane.columnIndex="1" text="Select Root Directory"/>
+
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.rowSpan="2">
+                    <Slider fx:id="fuzzySlider" max="5" majorTickUnit="1" minorTickCount="0"
+                            showTickMarks="true" snapToTicks="true"/>
+                    <Label fx:id="fuzzyLabel" text="Errors Allowed: 0" />
+                </VBox>
+
+
+                <Button fx:id="rootDirButton" onAction="#selectRootDirectory" text="Select Root Directory"
+                        GridPane.rowIndex="2" GridPane.columnIndex="1"/>
             </GridPane>
         </HBox>
     </top>
@@ -88,6 +100,7 @@
             <fx:reference source="searchButton"/>
             <fx:reference source="matchField" />
             <fx:reference source="regexCb" />
+            <fx:reference source="fuzzySlider" />
         </ArrayList>
     </fx:define>
 

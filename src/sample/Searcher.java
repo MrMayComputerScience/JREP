@@ -92,9 +92,10 @@ public class Searcher extends Thread {
                     t.setOnMouseClicked(event -> {
                         if(event.getClickCount() == 2)
                             try{
-                                Desktop.getDesktop().open(f.getParentFile());
+                                Process p = new ProcessBuilder("explorer.exe",
+                                        "/select,"+f.getAbsolutePath()).start();
                             }
-                            catch(IOException e){
+                            catch(Exception e){
                                 e.printStackTrace();
                             }
                     });
@@ -135,7 +136,10 @@ public class Searcher extends Thread {
             if(rp.useRegex())
                 return compareString.matches(rp.getMatchString());
             else
-                return compareString.equals(rp.getMatchString());
+                if(rp.getFuzzyNumErrors() > 0)
+                    return editDistance(rp.getMatchString(), compareString, rp.getFuzzyNumErrors()) <= rp.getFuzzyNumErrors();
+                else
+                    return compareString.equals(rp.getMatchString());
         }
         else{
             if(rp.useRegex()){
@@ -145,6 +149,39 @@ public class Searcher extends Thread {
             }
             else
                 return compareString.contains(rp.getMatchString());
+
         }
+    }
+
+    private static int editDistance(String text, String pattern, int maxErrors){
+        int d[][];
+        int m = text.length();
+        int n = pattern.length();
+        if(Math.abs(m - n) > maxErrors){
+            return maxErrors+1;
+        }
+        d = new int[m+1][n+1];
+        for(int i = 0; i < m+1; ++i)
+            d[i][0] = i;
+        for(int i = 0; i < n+1; ++i)
+            d[0][i] = i;
+        for(int i = 1; i <= m; ++i)
+            for(int j = 1; j <= n; ++j){
+                if(text.charAt(i-1) == pattern.charAt(j-1))
+                    d[i][j] = d[i-1][j-1];
+                else{
+                    d[i][j] = min3(
+                            d[i-1][j] + 1,
+                            d[i][j-1] + 1,
+                            d[i-1][j-1] + 1
+                    );
+                }
+            }
+        return d[m][n];
+    }
+    private static int min3(int a, int b, int c){
+        return a < b ?
+                (a < c ? a : c) :
+                (b < c ? b : c);
     }
 }

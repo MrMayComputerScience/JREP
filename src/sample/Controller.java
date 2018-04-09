@@ -17,6 +17,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -34,6 +35,10 @@ public class Controller {
     @FXML private Label rootDirLabel;
     @FXML private Label statusLabel;
     @FXML private List<Node> volatileElements;
+    @FXML private Slider fuzzySlider;
+    @FXML private Label fuzzyLabel;
+    @FXML private CheckBox strictCb;
+    @FXML private CheckBox regexCb;
 
     public void initialize(){
         boolean strictMatch = false;
@@ -43,12 +48,43 @@ public class Controller {
         rootDirLabel.setText(rootDir.getAbsolutePath());
         filesSearched.setText("0");
         matchesFound.setText("0");
-        rp = new ResourcePackage(rootDir, matchField.getText(),
+        rp = new ResourcePackage(rootDir, matchField.getText(), 2,
                 filesSearched, matchesFound, results, statusLabel,
                 strictMatch, searchContent, useRegex);
         matchField.textProperty().addListener((obs, oval, nval) -> {
             rp.setMatchString(nval);
         });
+        fuzzySlider.valueProperty().addListener(((observable, oldValue, newValue) ->{
+            //No use doing all this when the change is not noticeable
+            if(oldValue.intValue() != newValue.intValue()){
+                int num = newValue.intValue();
+                //Set the property of the resource package so that we can use it in computation
+                rp.setFuzzyNumErrors(num);
+
+                //Change the text so the user knows how many errors are allowed
+                String text = fuzzyLabel.getText().split(":")[0];
+                text += ": " + num;
+                fuzzyLabel.setText(text);
+
+                //Matching cannot be lazy and fuzzy at the same time. Same with regex
+                //If we are doing fuzzy matching, we specify (to rp and to the user) that we are strict matching
+                if(num != 0){
+                    strictCb.setSelected(true);
+                    strictCb.setDisable(true);
+
+                    regexCb.setSelected(false);
+                    regexCb.setDisable(true);
+
+                    rp.setStrictMatch(true);
+                    rp.setUseRegex(false);
+                }
+                else{
+                    strictCb.setDisable(false);
+                    regexCb.setDisable(false);
+                }
+            }
+
+        }));
         volatileElements = Collections.unmodifiableList(volatileElements);
     }
     public void selectRootDirectory(){
