@@ -24,6 +24,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public class Controller {
+    private static boolean SPEEDTEST;
 
     private File rootDir;
     private Searcher proc;
@@ -91,7 +92,7 @@ public class Controller {
         DirectoryChooser dc = new DirectoryChooser();
         Window popup = new Stage();
         File ret = dc.showDialog(popup);
-        rootDir = ret != null ? ret : rootDir;
+        rootDir = (ret != null) ? ret : rootDir;
         rootDirLabel.setText(rootDir.getAbsolutePath());
         rp.setRootDir(rootDir);
     }
@@ -104,23 +105,25 @@ public class Controller {
         for(Node n : volatileElements)
             n.setDisable(true);
         ///////////////////////////////
-        System.out.println("Before the removal");
         results.setItems(FXCollections.observableArrayList());
         System.out.println("rp = " + rp);
         proc = Searcher.create(rp);
+        long startTime = System.currentTimeMillis();
 
         proc.onEnd(() -> Platform.runLater(() -> {
             //ENABLE VOLATILE ELEMENTS
             for(Node n : volatileElements)
                 n.setDisable(false);
-
+            long millis = System.currentTimeMillis() - startTime;
+            int files = Integer.parseInt(filesSearched.getText());
+            System.out.printf("Speedtest: %d files/%d ms = %f files/second\n", files, millis,
+                    (float)files/(float)(millis/1000));
         }));
 
         proc.setDaemon(true);
         proc.start();
     }
     public void cancelSearch(){
-        System.out.println("Should stop");
         proc.cancel();
     }
 

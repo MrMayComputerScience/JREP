@@ -58,7 +58,7 @@
                 <VBox GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.rowSpan="2">
                     <Slider fx:id="fuzzySlider" max="5" majorTickUnit="1" minorTickCount="0"
                             showTickMarks="true" snapToTicks="true"/>
-                    <Label fx:id="fuzzyLabel" text="Errors Allowed: 0" />
+                    <Label fx:id="fuzzyLabel" text="Fuzzy Limit: 0" />
                 </VBox>
 
 
